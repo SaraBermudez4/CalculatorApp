@@ -1,4 +1,4 @@
-import { Box, Container, Grid, GridItem, Text } from '@chakra-ui/layout'
+import { Box, Container, Grid, GridItem } from '@chakra-ui/layout'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
@@ -13,13 +13,13 @@ const StyledContainerCalculator = styled(Container)`
     width:360px;
     border-radius: 5px;
 `
-const StyledText1 = styled(Text)`
+const StyledText1 = styled.div`
     font-family: digital;
     font-size: 20px;
     line-height: 20px;
     color: orange;
 `
-const StyledText2 = styled(Text)`
+const StyledText2 = styled.div`
 @font-face {
   font-family: 'Digital';
   src: url('//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.eot');
@@ -69,183 +69,78 @@ const StypedBoxRight = styled(Box)`
 
 const CalculatorContainer = () => {
 
-    const [resultado, setResultado] = useState(0)
-    const [numero, setNumero] = useState('')
     const [textResultado, setTextResultado] = useState('')
+    const [respuesta, setRespuesta] = useState(0)
 
-    const sumar = () => {
-        if (textResultado.includes('=')) {
-            setNumero(resultado)
-            setResultado(resultado)
-            setTextResultado(`${resultado}+`)
-        } else {
-            setTextResultado(`${textResultado}+`)
-        }
-    }
-    const restar = () => {
-        if (textResultado.includes('=')) {
-            setNumero(resultado)
-            setResultado(resultado)
-            setTextResultado(`${resultado}-`)
-        } else {
-            setTextResultado(`${textResultado}-`)
-        }
-    }
-    const dividir = () => {
-        if (textResultado.includes('=')) {
-            setNumero(resultado)
-            setResultado(resultado)
-            setTextResultado(`${resultado}/`)
-        } else {
-            setTextResultado(`${textResultado}/`)
-        }
-    }
-    const multiplicar = () => {
-        if (textResultado.includes('=')) {
-            setNumero(resultado)
-            setResultado(resultado)
-            setTextResultado(`${resultado}*`)
-        } else {
-            setTextResultado(`${textResultado}*`)
-        }
-    }
-    const decimal = () => {
-        if (textResultado.includes('=')) {
-            // if (!parseFloat(numero) % 1 !== 0) {
-            //     setResultado(numero)
-            //     setTextResultado(`${numero}`)
-            // }
-            // } else {
-            // setTextResultado(`${textResultado}.`)
-            setNumero(resultado)
-            setResultado(resultado)
-            setTextResultado(`${resultado}.`)
-        } else {
-            setNumero(`${numero}.`)
-            setTextResultado(`${textResultado}.`)
-        }
+    const obtenerNumero = (numero) => {
 
-    }
-    const resultadoCalculadora = () => {
-        if (resultado % 1 !== 0) {
-            setResultado(parseFloat(resultado.toFixed(4)))
-            setTextResultado(textResultado + '=' + parseFloat(resultado.toFixed(4)))
-            setNumero(parseFloat(resultado.toFixed(4)))
+        if (textResultado.includes('=')) {
+            setTextResultado('')
+            setRespuesta(0)
+        }
+        else if (numero === 'AC') {
+            setTextResultado('')
+            setRespuesta('')
         } else {
-            if (textResultado.includes('*-')) {
-                setResultado(parseFloat('-' + resultado))
-                setTextResultado(textResultado + '=' + parseFloat('-' + resultado))
-                setNumero('-' + resultado)
-            } else {
-                setResultado(resultado)
-                setTextResultado(textResultado + '=' + resultado)
-                setNumero(resultado)
+            setTextResultado(n => n + numero)
+            if (textResultado[textResultado.length - 1] == '=') {
+                if (/[0-9.]/.test(numero)) {
+                    setTextResultado(numero)
+                } else {
+                    setTextResultado(respuesta + numero)
+                }
             }
         }
-
     }
 
-    const obtenerNumero = (n) => {
-        if (textResultado.includes('=')) {
-            // if (n !== "0") {
-            setNumero(n)
-            setResultado(n)
-            setTextResultado('' + n)
-            // }
-        }
-        else if (textResultado.includes('*')) {
-            n = (parseFloat(n))
-            setNumero(n)
-            setTextResultado(textResultado + n)
-            setResultado(parseFloat(resultado) * n)
-        }
-        else if (textResultado.includes('/')) {
-            n = (parseFloat(n))
-            setNumero(n)
-            setTextResultado(textResultado + n)
-            setResultado(parseFloat(resultado) / n)
-        }
-        else if (textResultado.includes('-')) {
-            // n = (parseFloat(n))
-            // if (resultado % 1 !== 0){
-            //     setNumero(numero +)
-            //     setTextResultado(textResultado + n)
-            //     setResultado(parseFloat(resultado) - n)
-            // }else{
-            //     setNumero(n)
-            //     setTextResultado(textResultado + n)
-            //     setResultado(parseFloat(resultado) - n)
-            // }
-            setNumero(n)
-            setTextResultado(textResultado + n)
-            setResultado(parseFloat(resultado) - n)
-        }
-        else if (textResultado.includes('+')) {
-            n = (parseFloat(n))
-            setNumero(n)
-            setTextResultado(textResultado + n)
-            setResultado(parseFloat(resultado) + n)
-        }
-        else if (!textResultado.includes('..')) {
-            setNumero(textResultado + n)
-            setTextResultado(textResultado + n)
-            setResultado(textResultado + n)
-
-        } else {
-            setNumero(numero + n)
-            setTextResultado(textResultado + n)
-            setResultado(numero + n)
-        }
+    const operation = () => {
+        setRespuesta(eval(textResultado))
+        setTextResultado(n => n + '=')
     }
 
     return (
         <StyledContainerCalculator>
-            <Box textAlign="right" >
-                <StyledText1 id="display">
+            <Box textAlign="right">
+
+                <StyledText1>
                     {
-                        (textResultado !== '')
+                        textResultado !== ''
                             ?
-                            textResultado
+                            textResultado.includes('.')
+                                ?
+                                textResultado.toFixed(4)
+                                :
+                                textResultado
                             :
-                            <p style={{ height: "20px" }}>
-                                {"0"}
-                            </p>
+                            '0'
                     }
                 </StyledText1>
-                <StyledText2 >
+                <StyledText2 id='display'>
                     {
-                        (numero !== '')
+                        respuesta !== ''
                             ?
-                            numero
+                            !Number.isInteger(respuesta)
+                                ?
+                                respuesta.toFixed(4)
+                                :
+                                respuesta
                             :
-                            <p style={{ height: "45px" }}>
-                                {"0"}
-                            </p>
+                            '0'
                     }
-
                 </StyledText2>
             </Box>
             <Grid
-                templateColumns="repeat(2, 1fr)"
-            >
+                templateColumns="repeat(2, 1fr)">
                 <Grid width="240px" colSpan={3}>
                     <GridItem colSpan={3}>
                         <Grid templateColumns="repeat(3, 1fr)" width="240px">
                             <StyledBoxNumber bg="rgb(172, 57, 57) !important" w="160px" h="80px" id="clear">
-                                <button style={{ height: "100%", width: "100%" }} onClick={() => {
-                                    setNumero('')
-                                    setResultado(0)
-                                    setTextResultado('')
-                                }
-                                }>
+                                <button style={{ height: "100%", width: "100%" }} onClick={() => obtenerNumero('AC')} id='clear'>
                                     AC
-                    </button>
+                                </button>
                             </StyledBoxNumber>
                             <StyledBoxNumber bg="rgb(102, 102, 102) !important" h="80px" w="80px" id="divide">
-                                <button style={{ height: "100%", width: "100%" }} onClick={() => {
-                                    dividir('/')
-                                }
-                                }>
+                                <button style={{ height: "100%", width: "100%" }} onClick={() => obtenerNumero("/")}>
                                     /
                     </button>
                             </StyledBoxNumber>
@@ -305,22 +200,12 @@ const CalculatorContainer = () => {
                     <GridItem colSpan={3}>
                         <Grid templateColumns="repeat(3, 1fr)" width="240px">
                             <StyledBoxNumber id="zero" w="160px" h="80px">
-                                <button style={{ height: "100%", width: "100%" }} onClick={() => {
-                                    // if (!textResultado === '') {
-                                    obtenerNumero('0')
-                                    // }
-                                }
-                                }>
+                                <button style={{ height: "100%", width: "100%" }} onClick={() => obtenerNumero("0")}>
                                     0
                     </button>
                             </StyledBoxNumber>
                             <StyledBoxNumber h="80px" w="80px" id="decimal">
-                                <button style={{ height: "100%", width: "100%" }} onClick={() => {
-                                    // if (!textResultado.includes(".")) {
-                                    decimal('.')
-                                    // }
-                                }
-                                }>
+                                <button style={{ height: "100%", width: "100%" }} onClick={() => obtenerNumero(".")}>
                                     .
                     </button>
                             </StyledBoxNumber>
@@ -329,34 +214,22 @@ const CalculatorContainer = () => {
                 </Grid>
                 <GridItem colSpan={1}>
                     <StypedBoxRight h="80px" bg="rgb(102, 102, 102)" id="multiply">
-                        <button style={{ height: "100%", width: "100%" }} onClick={() => {
-                            multiplicar('*')
-                        }
-                        }>
+                        <button style={{ height: "100%", width: "100%" }} onClick={() => obtenerNumero("*")}>
                             x
                 </button>
                     </StypedBoxRight>
                     <StypedBoxRight h="80px" bg="rgb(102, 102, 102)" id="subtract">
-                        <button style={{ height: "100%", width: "100%" }} onClick={() => {
-                            restar('-')
-                        }
-                        }>
+                        <button style={{ height: "100%", width: "100%" }} onClick={() => obtenerNumero("-")}>
                             -
                 </button>
                     </StypedBoxRight>
                     <StypedBoxRight h="80px" bg="rgb(102, 102, 102)" id="add">
-                        <button style={{ height: "100%", width: "100%" }} onClick={() => {
-                            sumar('+')
-                        }
-                        }>
+                        <button style={{ height: "100%", width: "100%" }} onClick={() => obtenerNumero("+")}>
                             +
                 </button>
                     </StypedBoxRight>
                     <StypedBoxRight h="160px" bg="rgb(0, 68, 102)" id="equals">
-                        <button style={{ height: "100%", width: "100%" }} onClick={() => {
-                            resultadoCalculadora()
-                        }
-                        }>
+                        <button style={{ height: "100%", width: "100%" }} onClick={operation}>
                             =
                 </button>
                     </StypedBoxRight>
